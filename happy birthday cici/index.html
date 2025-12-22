@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Desy!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/typewriter-effect@latest/dist/core.js"></script>
+    
+    <style>
+        :root {
+            --cake-color: #F3D5B5;
+            --icing-color: #FF9494;
+            --gold: #D4AF37;
+            --pink-dark: #BE5985;
+        }
+
+        body, html {
+            overflow: hidden;
+            margin: 0; padding: 0;
+            width: 100vw; height: 100vh;
+            font-family: "Pixelify Sans", sans-serif;
+            background-color: #FFEDFA;
+            color: var(--pink-dark);
+        }
+
+        /* --- Sprinkle Effect --- */
+        .sprinkle {
+            position: absolute; width: 6px; height: 12px;
+            top: -20px; border-radius: 3px; pointer-events: none;
+            z-index: 1; animation: fall linear infinite;
+        }
+        @keyframes fall { to { transform: translateY(105vh) rotate(360deg); } }
+
+        .page {
+            display: none; flex-direction: column;
+            justify-content: center; align-items: center;
+            height: 100vh; text-align: center; padding: 20px;
+            position: relative; z-index: 2;
+        }
+        .page.active { display: flex; }
+
+        /* --- Animasi Kue --- */
+        .cake-container { display: flex; flex-direction: column-reverse; align-items: center; margin-bottom: 20px; }
+        .plate { width: 180px; height: 10px; background: #D7E3FC; border-radius: 50%; }
+        .layer { height: 30px; border-radius: 8px; opacity: 0; transform: translateY(-500px); animation: drop 0.8s forwards; }
+        .icing { height: 8px; background: var(--icing-color); border-radius: 5px; opacity: 0; transform: translateY(-500px); animation: drop 0.8s forwards; }
+        
+        .layer-1 { background: var(--cake-color); animation-delay: 0.5s; width: 160px; }
+        .icing-1 { animation-delay: 1s; width: 160px; }
+        .layer-2 { background: var(--cake-color); animation-delay: 1.5s; width: 120px; }
+        .icing-2 { animation-delay: 2s; width: 120px; }
+        .layer-3 { background: var(--cake-color); animation-delay: 2.5s; width: 80px; }
+
+        .candle-wrapper { opacity: 0; transform: translateY(-500px); animation: drop 0.8s forwards; animation-delay: 3s; }
+        .candle { font-size: 30px; font-weight: bold; color: var(--gold); }
+        .flame { width: 10px; height: 15px; background: #ffda44; border-radius: 50%; margin: 0 auto -5px; box-shadow: 0 0 10px #ffda44; animation: flicker 0.1s infinite alternate; }
+
+        @keyframes drop { to { opacity: 1; transform: translateY(0); } }
+        @keyframes flicker { to { transform: scale(1.1); } }
+
+        /* --- Tombol Kabur --- */
+        .text { font-size: 2rem; font-weight: bold; min-height: 60px; margin-bottom: 20px; }
+        #ejekan { position: absolute; color: var(--pink-dark); font-size: 1rem; font-style: italic; opacity: 0; transition: 0.3s; z-index: 10; }
+        .btn { padding: 12px 24px; font-size: 1rem; background-color: var(--pink-dark); color: white; border: none; border-radius: 8px; cursor: pointer; font-family: "Pixelify Sans", sans-serif; z-index: 100; }
+
+        /* --- SLIDE FOTO DI SURAT --- */
+        .paper {
+            width: 90%; max-width: 350px; background: white;
+            border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin: 20px; padding: 15px; overflow-y: auto; max-height: 80vh;
+        }
+        
+        .photo-slider {
+            width: 100%; height: 200px; overflow-x: scroll;
+            display: flex; gap: 10px; scroll-snap-type: x mandatory;
+            margin-bottom: 15px; border-radius: 8px;
+            scrollbar-width: none;
+        }
+        .photo-slider::-webkit-scrollbar { display: none; }
+        
+        .photo-slider img {
+            width: 100%; height: 100%; object-fit: cover;
+            flex-shrink: 0; scroll-snap-align: center;
+            border: 2px solid #eee; border-radius: 5px;
+        }
+
+        .photo-slider-wrapper { position: relative; }
+        .slider-btn {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            background: rgba(255,255,255,0.9); border: none; width: 36px; height: 36px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.15); font-size: 16px; z-index: 5;
+        }
+        .slider-btn.left { left: 6px; }
+        .slider-btn.right { right: 6px; }
+        .slider-btn:hover { transform: translateY(-50%) scale(1.05); }
+
+        .letter-text { font-family: "Caveat", cursive; font-size: 1.2rem; color: #555; text-align: justify; }
+    </style>
+</head>
+<body>
+
+    <audio id="laguUltah" loop>
+        <source src="happy birthday.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="music-hint" style="position:fixed;left:12px;bottom:12px;background:rgba(255,255,255,0.95);padding:8px;border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,0.12);font-size:0.85rem;color:var(--pink-dark);display:none;z-index:200;cursor:pointer;">Klik di mana saja untuk memulai musik</div>
+
+    <div id="sprinkles"></div>
+
+    <div id="home" class="page active">
+        <div class="cake-container">
+            <div class="plate"></div>
+            <div class="layer layer-1"></div>
+            <div class="icing-1 icing"></div>
+            <div class="layer layer-2"></div>
+            <div class="icing-2 icing"></div>
+            <div class="layer layer-3"></div>
+            <div class="candle-wrapper">
+                <div class="flame"></div>
+                <div class="candle">21</div>
+            </div>
+        </div>
+        <div id="typewriter-home" class="text"></div>
+        <div id="ejekan">Wlee! Gak kena! 😜</div>
+        <button id="btn-next" class="btn" onmouseover="kabur()" onclick="navigateTo('letter')">Next</button>
+    </div>
+
+    <div id="letter" class="page">
+        <div id="typewriter-letter" class="text" style="font-size: 1.5rem;"></div>
+        <img style="width: 100px; margin: 20px 0;" src="Img/letter.png" alt="letter">
+        <div style="display: flex; gap: 10px;">
+            <button class="btn" onclick="navigateTo('home')">Go Back</button>
+            <button class="btn" onclick="startMusic(); navigateTo('birthday-letter')">Open It</button>
+        </div>
+    </div>
+
+    <div id="birthday-letter" class="page">
+        <div class="paper">
+            <div class="photo-slider-wrapper" style="position:relative;">
+                <div class="photo-slider">
+                    <img src="Img/desy 1.jpeg" alt="Foto 1">
+                    <img src="Img/desy 2.jpeg" alt="Foto 2">
+                    <img src="Img/desy 3.jpeg" alt="Foto 3">
+                    <img src="Img/desy 4.jpeg" alt="Foto 4">
+                    <img src="Img/desy 5.jpeg" alt="Foto 5">
+                </div>
+                <button class="slider-btn left" aria-label="Scroll left">◀</button>
+                <button class="slider-btn right" aria-label="Scroll right">▶</button>
+            </div>
+            
+            <div class="letter-text">
+                <p>OMGGG CIEEEEE 🎉🎂</p>
+                <p>ADA YANG UMURNYA NAMBAH NIH 😆💖</p>
+                <p>Happy birthday yaa bestieee 🤍✨</p>
+                <p>Nggak kerasa ya kamu udah sejauh ini. Dari sekian banyak drama, capek, ketawa, nangis (apalagi di semester 5 ini uhuk 😌), kamu masih berdiri dengan versi kamu yang kuat banget.</p>
+                <p>Semoga di umur yang baru ini, hidup kamu makin happy, rezekinya lancar, urusannya dimudahkan, dan hal-hal yang bikin kamu senyum datengnya sering-sering. Yang bikin sedih? Jauh-jauh deh 😤✋</p>
+                <p style="text-align: right;">Enjoy your day yaa, birthday girl 💐, <br> Dilah</p>
+            </div>
+        </div>
+        <button class="btn" onclick="navigateTo('home')">Back to Start</button>
+    </div>
+
+    <script>
+        const audio = document.getElementById('laguUltah');
+        let musicStarted = false;
+
+        // Start music on first user gesture (browser autoplay policies)
+        function startMusic() {
+            if (musicStarted) return;
+            audio.play().then(() => {
+                musicStarted = true;
+                const btn = document.getElementById('play-music');
+                if (btn) btn.style.display = 'none';
+                const hint = document.getElementById('music-hint');
+                if (hint) hint.style.display = 'none';
+            }).catch(e => {
+                console.log('Musik gagal putar saat gesture:', e);
+                const hint = document.getElementById('music-hint');
+                if (hint) hint.style.display = 'block';
+            });
+        }
+
+        // make the hint clickable to try again
+        const musicHint = document.getElementById('music-hint');
+        if (musicHint) musicHint.addEventListener('click', startMusic);
+
+        // Try to start on first click anywhere
+        document.addEventListener('click', startMusic, { once: true, passive: true });
+
+        function createSprinkles() {
+            const container = document.getElementById('sprinkles');
+            const colors = ['#FFB6C1', '#FF69B4', '#FFFACD', '#E6E6FA', '#87CEFA'];
+            for (let i = 0; i < 40; i++) {
+                let s = document.createElement('div');
+                s.className = 'sprinkle';
+                s.style.left = Math.random() * 100 + 'vw';
+                s.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                s.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                s.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(s);
+            }
+        }
+
+        let canMove = true;
+        const btnNext = document.getElementById('btn-next');
+        const ejekText = document.getElementById('ejekan');
+
+        function kabur() {
+            if (!canMove) return;
+            const x = Math.random() * (window.innerWidth - 100);
+            const y = Math.random() * (window.innerHeight - 50);
+            btnNext.style.position = 'fixed';
+            btnNext.style.left = x + 'px';
+            btnNext.style.top = y + 'px';
+            ejekText.style.left = x + 'px';
+            ejekText.style.top = (y - 30) + 'px';
+            ejekText.style.opacity = 1;
+            setTimeout(() => ejekText.style.opacity = 0, 800);
+        }
+
+        setTimeout(() => {
+            canMove = false;
+            btnNext.style.position = 'relative';
+            btnNext.style.left = '0'; btnNext.style.top = '0';
+            btnNext.style.margin = '20px auto';
+            ejekText.innerText = "Yaudah deh aku diem..";
+            ejekText.style.position = 'relative';
+            ejekText.style.opacity = 1;
+        }, 18000);
+
+        function navigateTo(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            if(pageId === 'home') initHomeTypewriter();
+            if(pageId === 'letter') initLetterTypewriter();
+            if(pageId === 'birthday-letter') {
+                // try to start music when user opens the birthday letter page
+                startMusic();
+            }
+        }
+
+        function initHomeTypewriter() {
+            const el = document.getElementById('typewriter-home');
+            el.innerHTML = "";
+            setTimeout(() => {
+                new Typewriter(el, {
+                    strings: ["HAPPY BIRTHDAY DESY🎂"],
+                    autoStart: true, loop: true, delay: 70
+                });
+                if(!musicStarted) {
+                    audio.play().catch(e => console.log("Musik gagal putar:", e));
+                    musicStarted = true;
+                }
+            }, 3500);
+        }
+
+        function initLetterTypewriter() {
+            const el = document.getElementById('typewriter-letter');
+            el.innerHTML = "";
+            new Typewriter(el, {
+                strings: ["Letter for You💌"],
+                autoStart: true, loop: true, delay: 70
+            });
+        }
+
+        window.onload = () => {
+            createSprinkles();
+            initHomeTypewriter();
+            // setup photo slider arrows
+            const slider = document.querySelector('.photo-slider');
+            const btnLeft = document.querySelector('.slider-btn.left');
+            const btnRight = document.querySelector('.slider-btn.right');
+            if(slider && btnLeft && btnRight) {
+                btnLeft.addEventListener('click', () => {
+                    slider.scrollBy({ left: -slider.clientWidth * 0.9, behavior: 'smooth' });
+                });
+                btnRight.addEventListener('click', () => {
+                    slider.scrollBy({ left: slider.clientWidth * 0.9, behavior: 'smooth' });
+                });
+            }
+            // try to autoplay music on page load; if blocked, hint will show
+            startMusic();
+        };
+    </script>
+</body>
+</html>
